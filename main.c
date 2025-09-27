@@ -1,0 +1,149 @@
+/* Name: 
+   Date: 
+   Assignment #3 - Grid Area Counter using Depth First Search implemented with a linked stack.
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Structure: Point
+Represents a location in the grid that will be placed on the stack.
+[document your struct's variables here]
+*/
+struct Point {
+    int temp[2];
+};
+
+struct Stack {
+    int *top;
+};
+
+
+
+
+
+
+/* Structure: Stack
+Represents a Stack data structure to store Point objects in LIFO order.
+[document your struct's variables here]
+*/
+
+
+
+
+/* Function: push
+Adds a new Point object to the top of the stack.
+struct Stack *stack - [fill in your documentation here]
+int r - [fill in your documentation here]
+int c - [fill in your documentation here]
+*/
+void push(struct Stack *stack, int r, int c) {
+
+
+
+
+
+}
+
+/* Function: pop
+Removes and deallocates the Point object from the top of the stack.
+struct Stack *stack - [fill in your documentation here]
+int *retloc - return parameter - [fill in your documentation here]
+*/
+void pop(struct Stack *stack, int *retloc) {
+
+
+
+
+
+
+}
+
+
+/* Function: print_grid
+Displays the contents of the grid in a matrix format.
+char **grid - [fill in your documentation here]
+int rows - [fill in your documentation here]
+int cols - [fill in your documentation here]
+*/
+void print_grid(char **grid, int rows, int cols) {
+
+
+
+
+
+
+}
+
+int main()
+{
+    //open file
+    FILE *fptr = fopen("grid.txt", "r");
+    int rows, cols;
+    char **grid;
+    if(fptr != NULL) {
+        //get rows & cols from file
+        char c;
+        fscanf(fptr, "%d%d%c", &rows, &cols, &c);
+        //dynamically allocate 2D array
+
+
+
+
+
+        //read in grid
+        for(int i = 0; i < rows; i++) {
+            for(int j = 0; j <= cols; j++) {
+                char ch = fgetc(fptr);
+                if(ch != '\n') {
+                    grid[i][j] = ch;
+                }
+            }
+        }
+    } else {
+        printf("ERROR - cannot open file.\n");
+    }
+    fclose(fptr);
+    
+    //display the grid
+
+
+
+    
+    //initialize stack
+
+
+
+
+
+    //traverse the grid to find initial 'o' for each area
+
+
+
+
+                //repeat while there is still items on the stack
+
+
+                    //pop an item from the stack
+
+                    //check neighboring positions for 'o's and place them on the stack
+                    //note: you should also make sure you're not going out of bounds
+
+
+
+
+
+
+
+                //display result of each area
+
+
+    //clean up - free everything that was allocated on the heap
+
+
+
+
+
+    
+    return 0;
+}
