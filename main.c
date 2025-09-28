@@ -1,5 +1,5 @@
-/* Name: 
-   Date: 
+/* Name: Javier Salamanca
+   Date: 09/27/25
    Assignment #3 - Grid Area Counter using Depth First Search implemented with a linked stack.
 */
 
@@ -10,14 +10,10 @@
 Represents a location in the grid that will be placed on the stack.
 [document your struct's variables here]
 */
-struct Point {
-    int temp[2];
+struct Point{
+    int pLocation[2];
+    struct Point* next;
 };
-
-struct Stack {
-    int *top;
-};
-
 
 
 
@@ -27,7 +23,9 @@ struct Stack {
 Represents a Stack data structure to store Point objects in LIFO order.
 [document your struct's variables here]
 */
-
+struct Stack{
+    struct Point* top;
+};
 
 
 
@@ -86,7 +84,10 @@ int main()
         char c;
         fscanf(fptr, "%d%d%c", &rows, &cols, &c);
         //dynamically allocate 2D array
-
+        grid = (char **)malloc(sizeof(char *) * rows);
+        for(size_t i = 0; i < rows; ++i){
+            grid[i] = (char *)malloc(sizeof(char *) * (cols + 1));
+        }
 
 
 
