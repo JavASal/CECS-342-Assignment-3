@@ -12,22 +12,16 @@ Represents a location in the grid that will be placed on the stack.
 */
 struct Point{
     int pLocation[2];
-    struct Point* next;
+    struct Point *next;
 };
-
-
-
-
 
 /* Structure: Stack
 Represents a Stack data structure to store Point objects in LIFO order.
 [document your struct's variables here]
 */
 struct Stack{
-    struct Point* top;
+    struct Point *top;
 };
-
-
 
 /* Function: push
 Adds a new Point object to the top of the stack.
@@ -36,11 +30,12 @@ int r - [fill in your documentation here]
 int c - [fill in your documentation here]
 */
 void push(struct Stack *stack, int r, int c) {
+    struct Point *temp = (struct Point*)malloc(sizeof(struct Point));
+    temp->pLocation[0] = c;
+    temp->pLocation[1] = r;
+    temp->next = stack->top;
 
-
-
-
-
+    stack->top = temp;
 }
 
 /* Function: pop
@@ -49,12 +44,13 @@ struct Stack *stack - [fill in your documentation here]
 int *retloc - return parameter - [fill in your documentation here]
 */
 void pop(struct Stack *stack, int *retloc) {
+    retloc[0] = stack->top->pLocation[0];
+    retloc[1] = stack->top->pLocation[1];
 
+    struct Point *temp = stack->top;
 
-
-
-
-
+    stack->top = stack->top->next;
+    free(temp);
 }
 
 
@@ -65,12 +61,12 @@ int rows - [fill in your documentation here]
 int cols - [fill in your documentation here]
 */
 void print_grid(char **grid, int rows, int cols) {
-
-
-
-
-
-
+    for(size_t i = 0; i < rows; ++i){
+        for(size_t j = 0; j < cols; ++j){
+            printf("%c", grid[i][j]);
+        }
+        printf("\n");
+    }
 }
 
 int main()
@@ -107,11 +103,26 @@ int main()
     fclose(fptr);
     
     //display the grid
-
+    print_grid(grid, rows, cols);
 
 
     
     //initialize stack
+    struct Stack myStack;
+    myStack.top = NULL;
+
+    for(size_t i = 0; i < rows && myStack.top == NULL; ++i){
+        for(size_t j = 0; j < cols && myStack.top == NULL; ++j){
+            if (grid[i][j] =='o'){
+                push(&myStack, i, j);
+            }
+        }
+    }
+    if(myStack.top == NULL){
+        printf("No \'o\' found in grid.");
+        exit(0);
+    }
+
 
 
 
