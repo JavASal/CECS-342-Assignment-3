@@ -31,8 +31,8 @@ int c - [fill in your documentation here]
 */
 void push(struct Stack *stack, int r, int c) {
     struct Point *temp = (struct Point*)malloc(sizeof(struct Point));
-    temp->pLocation[0] = c;
-    temp->pLocation[1] = r;
+    temp->pLocation[0] = r;
+    temp->pLocation[1] = c;
     temp->next = stack->top;
 
     stack->top = temp;
@@ -51,6 +51,7 @@ void pop(struct Stack *stack, int *retloc) {
 
     stack->top = stack->top->next;
     free(temp);
+    temp = NULL;
 }
 
 
@@ -111,25 +112,55 @@ int main()
     struct Stack myStack;
     myStack.top = NULL;
 
-    for(size_t i = 0; i < rows && myStack.top == NULL; ++i){
-        for(size_t j = 0; j < cols && myStack.top == NULL; ++j){
-            if (grid[i][j] =='o'){
+
+
+    int amount = 0;
+
+    //pop function required a "return" array of 2 ints, not quite sure what for
+    int lastSeen[2] = {0, 0};
+
+    for (int i  = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            if (grid[i][j] == 'o') {
                 push(&myStack, i, j);
+                ++amount;
+                //mark as seen
+                grid[i][j] = 'x';
+
+                while (myStack.top != NULL) {
+                    //Looking left of point from top of stack
+                    if (myStack.top->pLocation[1] - 1 >= 0 && grid[myStack.top->pLocation[0]][myStack.top->pLocation[1] - 1] == 'o') {
+                        grid[myStack.top->pLocation[0]][myStack.top->pLocation[1] - 1] = 'x';
+                        push(&myStack, myStack.top->pLocation[0], myStack.top->pLocation[1] - 1);
+                        ++amount;
+                    }
+                    //Looking right of point from top of stack
+                    else if(myStack.top->pLocation[1] + 1 < cols && grid[myStack.top->pLocation[0]][myStack.top->pLocation[1] + 1] == 'o') {
+                        grid[myStack.top->pLocation[0]][myStack.top->pLocation[1] + 1] = 'x';
+                        push(&myStack, myStack.top->pLocation[0], myStack.top->pLocation[1] + 1);
+                        ++amount;
+                    }
+                    //Looking upwards from point from top of stack
+                    else if (myStack.top->pLocation[0] - 1 >= 0 && grid[myStack.top->pLocation[0] - 1][myStack.top->pLocation[1]] == 'o') {
+                        grid[myStack.top->pLocation[0] - 1][myStack.top->pLocation[1]] = 'x';
+                        push(&myStack, myStack.top->pLocation[0] - 1, myStack.top->pLocation[1]);
+                        ++amount;
+                    }
+                    //Lookin downwards from point from top of stack
+                    else if (myStack.top->pLocation[0] + 1 < rows && grid[myStack.top->pLocation[0] + 1][myStack.top->pLocation[1]] == 'o') {
+                        grid[myStack.top->pLocation[0 ] + 1][myStack.top->pLocation[1]] = 'x';
+                        push(&myStack, myStack.top->pLocation[0] + 1, myStack.top->pLocation[1]);
+                        ++amount;
+                    }
+                    else {
+                        pop(&myStack, &lastSeen[0]);
+                    }
+                }
+                printf("Found %d clustered\n", amount);
+                amount = 0;
             }
         }
     }
-    if(myStack.top == NULL){
-        printf("No \'o\' found in grid.");
-        exit(0);
-    }
-
-
-
-
-
-
-    //traverse the grid to find initial 'o' for each area
-
 
 
 
