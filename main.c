@@ -105,6 +105,7 @@ int main()
     
     //display the grid
     print_grid(grid, rows, cols);
+    printf("\n");
 
 
     
@@ -115,6 +116,7 @@ int main()
 
 
     int amount = 0;
+    int areaCounter = 1;
 
     //pop function required a "return" array of 2 ints, not quite sure what for
     int lastSeen[2] = {0, 0};
@@ -156,7 +158,8 @@ int main()
                         pop(&myStack, &lastSeen[0]);
                     }
                 }
-                printf("Found %d clustered\n", amount);
+                printf("Area %d = %d\n", areaCounter, amount);
+                areaCounter++;
                 amount = 0;
             }
         }
