@@ -112,7 +112,7 @@ int main()
     
     //initialize stack
     struct Stack myStack;
-    myStack.p = nullptr;
+    myStack.p = NULL;
 
 
 
@@ -176,9 +176,9 @@ int main()
     //at this point everything that was dynamically on the stack should have been freed through the pop function
     for (int i = 0; i < rows; ++i) {
         free(grid[i]);
-        grid[i] = nullptr;
+        grid[i] = NULL;
     }
     free(grid);
-    grid = nullptr;
+    grid = NULL;
     return 0;
 }
