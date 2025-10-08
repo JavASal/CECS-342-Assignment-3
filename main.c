@@ -8,7 +8,8 @@
 
 /* Structure: Point
 Represents a location in the grid that will be placed on the stack.
-[document your struct's variables here]
+- pLocation: an array of 2 integers that hold the row and column of a given point
+- next: a pointer to the next Point struct in the stack
 */
 struct Point{
     int pLocation[2];
@@ -17,39 +18,39 @@ struct Point{
 
 /* Structure: Stack
 Represents a Stack data structure to store Point objects in LIFO order.
-[document your struct's variables here]
+- p: pointer to the top Point on the stack
 */
 struct Stack{
-    struct Point *top;
+    struct Point *p;
 };
 
 /* Function: push
 Adds a new Point object to the top of the stack.
 struct Stack *stack - [fill in your documentation here]
-int r - [fill in your documentation here]
-int c - [fill in your documentation here]
+int r - used to pass the row index to be stored on the dynamically created point
+int c - used to pass the column index to be stored on the dynamically created point
 */
 void push(struct Stack *stack, int r, int c) {
     struct Point *temp = (struct Point*)malloc(sizeof(struct Point));
     temp->pLocation[0] = r;
     temp->pLocation[1] = c;
-    temp->next = stack->top;
+    temp->next = stack->p;
 
-    stack->top = temp;
+    stack->p = temp;
 }
 
 /* Function: pop
 Removes and deallocates the Point object from the top of the stack.
-struct Stack *stack - [fill in your documentation here]
-int *retloc - return parameter - [fill in your documentation here]
+struct Stack *stack - pointer to stack where item will be popped from
+int *retloc - return parameter - array of 2 integers that is used to return the indices of the point that was popped from the stack
 */
 void pop(struct Stack *stack, int *retloc) {
-    retloc[0] = stack->top->pLocation[0];
-    retloc[1] = stack->top->pLocation[1];
+    retloc[0] = stack->p->pLocation[0];
+    retloc[1] = stack->p->pLocation[1];
 
-    struct Point *temp = stack->top;
+    struct Point *temp = stack->p;
 
-    stack->top = stack->top->next;
+    stack->p = stack->p->next;
     free(temp);
     temp = NULL;
 }
@@ -57,9 +58,9 @@ void pop(struct Stack *stack, int *retloc) {
 
 /* Function: print_grid
 Displays the contents of the grid in a matrix format.
-char **grid - [fill in your documentation here]
-int rows - [fill in your documentation here]
-int cols - [fill in your documentation here]
+char **grid - pointer to an array of char points that holds the grid which was read in from the grid file
+int rows - passes in the integer read from the grid file that signifies the number of rows
+int cols - passes in the integer read from the grid file that signifies the number of colums
 */
 void print_grid(char **grid, int rows, int cols) {
     for(size_t i = 0; i < rows; ++i){
@@ -83,7 +84,7 @@ int main()
         //dynamically allocate 2D array
         grid = (char **)malloc(sizeof(char *) * rows);
         for(size_t i = 0; i < rows; ++i){
-            grid[i] = (char *)malloc(sizeof(char *) * (cols + 1));
+            grid[i] = (char *)malloc(sizeof(char *) * (cols));
         }
 
 
@@ -111,11 +112,11 @@ int main()
     
     //initialize stack
     struct Stack myStack;
-    myStack.top = NULL;
+    myStack.p = nullptr;
 
 
 
-    int amount = 0;
+    int areaSize = 0;
     int areaCounter = 1;
 
     //pop function required a "return" array of 2 ints, not quite sure what for
@@ -125,71 +126,59 @@ int main()
         for (int j = 0; j < cols; ++j) {
             if (grid[i][j] == 'o') {
                 push(&myStack, i, j);
-                ++amount;
+                ++areaSize;
                 //mark as seen
                 grid[i][j] = 'x';
 
-                while (myStack.top != NULL) {
-                    //Looking left of point from top of stack
-                    if (myStack.top->pLocation[1] - 1 >= 0 && grid[myStack.top->pLocation[0]][myStack.top->pLocation[1] - 1] == 'o') {
-                        grid[myStack.top->pLocation[0]][myStack.top->pLocation[1] - 1] = 'x';
-                        push(&myStack, myStack.top->pLocation[0], myStack.top->pLocation[1] - 1);
-                        ++amount;
+                //Checks neighboring cells after finding initial 'o' char.
+                //repeat while there is still items on the stack
+                //check neighboring positions for 'o's and place them on the stack
+                //note: you should also make sure you're not going out of bounds
+                while (myStack.p != NULL) {
+                    //Checks if left cell is within bounds then checks if cell contains 'o'
+                    if (myStack.p->pLocation[1] - 1 >= 0 && grid[myStack.p->pLocation[0]][myStack.p->pLocation[1] - 1] == 'o') {
+                        grid[myStack.p->pLocation[0]][myStack.p->pLocation[1] - 1] = 'x';
+                        push(&myStack, myStack.p->pLocation[0], myStack.p->pLocation[1] - 1);
+                        ++areaSize;
                     }
-                    //Looking right of point from top of stack
-                    else if(myStack.top->pLocation[1] + 1 < cols && grid[myStack.top->pLocation[0]][myStack.top->pLocation[1] + 1] == 'o') {
-                        grid[myStack.top->pLocation[0]][myStack.top->pLocation[1] + 1] = 'x';
-                        push(&myStack, myStack.top->pLocation[0], myStack.top->pLocation[1] + 1);
-                        ++amount;
+                    //Checks if right cell is within bounds then checks if cell contains 'o'
+                    else if(myStack.p->pLocation[1] + 1 < cols && grid[myStack.p->pLocation[0]][myStack.p->pLocation[1] + 1] == 'o') {
+                        grid[myStack.p->pLocation[0]][myStack.p->pLocation[1] + 1] = 'x';
+                        push(&myStack, myStack.p->pLocation[0], myStack.p->pLocation[1] + 1);
+                        ++areaSize;
                     }
-                    //Looking upwards from point from top of stack
-                    else if (myStack.top->pLocation[0] - 1 >= 0 && grid[myStack.top->pLocation[0] - 1][myStack.top->pLocation[1]] == 'o') {
-                        grid[myStack.top->pLocation[0] - 1][myStack.top->pLocation[1]] = 'x';
-                        push(&myStack, myStack.top->pLocation[0] - 1, myStack.top->pLocation[1]);
-                        ++amount;
+                    //Checks if upper cell is within bounds then checks if cell contains 'o'
+                    else if (myStack.p->pLocation[0] - 1 >= 0 && grid[myStack.p->pLocation[0] - 1][myStack.p->pLocation[1]] == 'o') {
+                        grid[myStack.p->pLocation[0] - 1][myStack.p->pLocation[1]] = 'x';
+                        push(&myStack, myStack.p->pLocation[0] - 1, myStack.p->pLocation[1]);
+                        ++areaSize;
                     }
-                    //Lookin downwards from point from top of stack
-                    else if (myStack.top->pLocation[0] + 1 < rows && grid[myStack.top->pLocation[0] + 1][myStack.top->pLocation[1]] == 'o') {
-                        grid[myStack.top->pLocation[0 ] + 1][myStack.top->pLocation[1]] = 'x';
-                        push(&myStack, myStack.top->pLocation[0] + 1, myStack.top->pLocation[1]);
-                        ++amount;
+                    //Checks if lower cell is within bounds then checks if cell contains 'o'
+                    else if (myStack.p->pLocation[0] + 1 < rows && grid[myStack.p->pLocation[0] + 1][myStack.p->pLocation[1]] == 'o') {
+                        grid[myStack.p->pLocation[0] + 1][myStack.p->pLocation[1]] = 'x';
+                        push(&myStack, myStack.p->pLocation[0] + 1, myStack.p->pLocation[1]);
+                        ++areaSize;
                     }
+                    //If there are no accessible neighboring cells or accessible ones do not contain 'o', then the point being checked is popped from stack
+                    //pop an item from the stack
                     else {
                         pop(&myStack, &lastSeen[0]);
                     }
                 }
-                printf("Area %d = %d\n", areaCounter, amount);
+                //display result of each area
+                printf("Area %d = %d\n", areaCounter, areaSize);
                 areaCounter++;
-                amount = 0;
+                areaSize = 0;
             }
         }
     }
-
-
-
-                //repeat while there is still items on the stack
-
-
-                    //pop an item from the stack
-
-                    //check neighboring positions for 'o's and place them on the stack
-                    //note: you should also make sure you're not going out of bounds
-
-
-
-
-
-
-
-                //display result of each area
-
-
     //clean up - free everything that was allocated on the heap
-
-
-
-
-
-    
+    //at this point everything that was dynamically on the stack should have been freed through the pop function
+    for (int i = 0; i < rows; ++i) {
+        free(grid[i]);
+        grid[i] = nullptr;
+    }
+    free(grid);
+    grid = nullptr;
     return 0;
 }
